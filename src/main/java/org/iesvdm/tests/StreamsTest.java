@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -15,7 +16,7 @@ class StreamsTest {
 
 	@Test
 	void test() {
-		fail("Not yet implemented");
+		//fail("Not yet implemented");
 	}
 
 
@@ -90,8 +91,8 @@ class StreamsTest {
 	 */
 	@Test
 	void test1() throws ParseException {
-		
-		
+
+
 		PedidoHome pedHome = new PedidoHome();	
 		try {
 			pedHome.beginTransaction();
@@ -99,10 +100,16 @@ class StreamsTest {
 			//PISTA: Generación por sdf de fechas
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			Date ultimoDia2016 = sdf.parse("2016-12-31");
+			Date primerDia2018 = sdf.parse("2018-01-01");
 			
 			List<Pedido> list = pedHome.findAll();
 				
-			//TODO STREAMS	
+			//TODO STREAMS
+			List<String> pedidos2017masde500 = list.stream()
+							.filter(pedido -> pedido.getFecha().after(ultimoDia2016) && pedido.getFecha().before(primerDia2018) && pedido.getTotal() > 500.0)
+							.map(pedido -> "id: " + pedido.getId() + " fecha: " + pedido.getFecha() + " total: " + pedido.getTotal())
+							.toList();
+			System.out.println(pedidos2017masde500);
 						
 			pedHome.commitTransaction();
 		}
